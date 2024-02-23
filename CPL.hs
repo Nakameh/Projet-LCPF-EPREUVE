@@ -1,27 +1,29 @@
-data Formula a
+data Formula
   = T
   | F
-  | And (Formula a) (Formula a)
-  | Or (Formula a) (Formula a)
-  | Imp (Formula a) (Formula a)
-  | Eqv (Formula a) (Formula a)
-  | Not (Formula a)
-  | Var a
+  | And Formula Formula
+  | Or Formula Formula
+  | Imp Formula Formula
+  | Eqv Formula Formula
+  | Not Formula
+  | Var String
   deriving (Show)
 
-
---La formule And (Or (Var "p1") (Var "p2")) (Or (Var "t1") (Var "t2"))
--- décrit une situation où il y a une porte qui peut contenir sois la peluche 1 ou la peluche 2
--- et une autre porte qui peut contenir soit le tigre 1 ou le tigre 2
-
-exemple :: Formula String
-exemple =
-  And (Or (Var "p1") (Var "p2")) (Or (Var "t1") (Var "t2"))
-
-constraint :: Formula String
-constraint = Not (And (Var "t1") (Var "t2"))
-
-reglement :: Formula String
-reglement = Or (And (Var "p1") (Not (Var "p2"))) (And (Not (Var "p1")) (Var "p2"))
+exemple :: Formula
+exemple = And (Or (Var "p1") (Var "p2")) (Or (Var "t1") (Var "t2"))
 
 
+door1 :: Formula
+door1 = And (Var "p1") (Var "t2")
+
+door2 :: Formula
+door2 = Or (Or (And (Var "p1") (Var "t1")) (And (Var "p1") (Var "t2"))) (Or (And (Var "p2") (Var "t1")) (And (Var "p2") (Var "t2")))
+
+constraint :: Formula
+constraint = Not (Or (And (Var "p1") (Var "t1")) (And (Var "p2") (Var "t2")))
+
+reglement :: Formula
+reglement = Or (And door1 (Not door2)) (And door2 (Not door1))
+
+challenge1 :: Formula
+challenge1 = Or door1 door2
