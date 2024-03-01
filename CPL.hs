@@ -4,7 +4,7 @@ module CPL (
     genAllWorlds,
     sat,
     findWorlds,
-    listStringPT
+    extrait
 ) where 
 
 
@@ -72,7 +72,7 @@ sat w (Var x) = contient w x
 
 
 findWorlds :: Formula -> [World]
-findWorlds f = listGoodWorlds f (genAllWorlds (retireDoublons (listStringPT f)))
+findWorlds f = listGoodWorlds f (genAllWorlds (retireDoublons (extrait f)))
 
 
 listGoodWorlds :: Formula -> [World] -> [World]
@@ -86,15 +86,15 @@ listGoodWorlds f (w:ws)
 
 
 
-listStringPT :: Formula -> [String]
-listStringPT T = []
-listStringPT F = []
-listStringPT (And f1 f2) = listStringPT f1 ++ listStringPT f2
-listStringPT (Or f1 f2) = listStringPT f1 ++ listStringPT f2
-listStringPT (Imp f1 f2) = listStringPT f1 ++ listStringPT f2
-listStringPT (Eqv f1 f2) = listStringPT f1 ++ listStringPT f2
-listStringPT (Not f) = listStringPT f
-listStringPT (Var x) = [x]
+extrait :: Formula -> [String]
+extrait T = []
+extrait F = []
+extrait (And f1 f2) = extrait f1 ++ extrait f2
+extrait (Or f1 f2) = extrait f1 ++ extrait f2
+extrait (Imp f1 f2) = extrait f1 ++ extrait f2
+extrait (Eqv f1 f2) = extrait f1 ++ extrait f2
+extrait (Not f) = extrait f
+extrait (Var x) = [x]
 
 retireDoublons :: [String] -> [String]
 retireDoublons [] = []
