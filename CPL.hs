@@ -1,10 +1,7 @@
 module CPL (
     Formula (..),
     World,
-    genAllWorlds,
-    sat,
-    findWorlds,
-    extrait
+    findWorlds
 ) where 
 
 
@@ -75,6 +72,7 @@ findWorlds :: Formula -> [World]
 findWorlds f = listGoodWorlds f (genAllWorlds (retireDoublons (extrait f)))
 
 
+
 listGoodWorlds :: Formula -> [World] -> [World]
 listGoodWorlds f [] = []
 listGoodWorlds f (w:ws) 
@@ -95,6 +93,7 @@ extrait (Imp f1 f2) = extrait f1 ++ extrait f2
 extrait (Eqv f1 f2) = extrait f1 ++ extrait f2
 extrait (Not f) = extrait f
 extrait (Var x) = [x]
+
 
 retireDoublons :: [String] -> [String]
 retireDoublons [] = []

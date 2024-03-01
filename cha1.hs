@@ -13,6 +13,6 @@ reglement :: Formula
 reglement = Or (And door1 (Not door2)) (And door2 (Not door1))
 
 challenge1 :: Formula
-challenge1 = And (Or door1 door2) (And constraint reglement)
+challenge1 = And constraint reglement
 
 
