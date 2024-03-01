@@ -1,6 +1,10 @@
 module CPL (
-  Formula (..),
-  World
+    Formula (..),
+    World,
+    genAllWorlds,
+    sat,
+    findWorlds,
+    listStringPT
 ) where 
 
 
@@ -58,26 +62,25 @@ sat w (Imp f1 f2) = not (sat w f1) || sat w f2
 sat w (Eqv f1 f2) = sat w f1 == sat w f2
 sat w (Not f) = not (sat w f)
 sat w (Var x) = contient w x
-
-
-contient :: World -> String -> Bool
-contient [] _ = False
-contient (y:ys) x 
-    | x == y = True
-    | otherwise = contient ys x
+    where 
+        contient [] _ = False
+        contient (y:ys) x 
+            | x == y = True
+            | otherwise = contient ys x
 
 
 
 
 findWorlds :: Formula -> [World]
-findWorlds f = listGoodWorlds f (genAllWorlds (listStringPT f))
+findWorlds f = listGoodWorlds f (genAllWorlds (retireDoublons (listStringPT f)))
 
 
 listGoodWorlds :: Formula -> [World] -> [World]
 listGoodWorlds f [] = []
 listGoodWorlds f (w:ws) 
-    | sat w f = w : listGoodWorlds f ws
+    | sat w f  = w : listGoodWorlds f ws
     | otherwise = listGoodWorlds f ws
+
 
 
 
@@ -93,3 +96,14 @@ listStringPT (Eqv f1 f2) = listStringPT f1 ++ listStringPT f2
 listStringPT (Not f) = listStringPT f
 listStringPT (Var x) = [x]
 
+retireDoublons :: [String] -> [String]
+retireDoublons [] = []
+retireDoublons (x:xs)
+    |contenu x xs = retireDoublons xs
+    |otherwise = x : retireDoublons xs
+    where 
+        contenu :: String -> [String] -> Bool
+        contenu _ [] = False
+        contenu x (y:ys)
+            | x == y = True
+            | otherwise = contenu x ys
