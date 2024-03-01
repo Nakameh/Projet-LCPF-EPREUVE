@@ -1,3 +1,8 @@
+module CPL (
+  Formula (..),
+  World
+) where 
+
 data Formula
   = T
   | F
@@ -12,18 +17,13 @@ data Formula
 exemple :: Formula
 exemple = And (Or (Var "p1") (Var "p2")) (Or (Var "t1") (Var "t2"))
 
+type World = [String]
 
-door1 :: Formula
-door1 = And (Var "p1") (Var "t2")
+w0 :: World
+w0 = ["p1", "p2"]
 
-door2 :: Formula
-door2 = Or (Or (And (Var "p1") (Var "t1")) (And (Var "p1") (Var "t2"))) (Or (And (Var "p2") (Var "t1")) (And (Var "p2") (Var "t2")))
+w1 :: World
+w1 = ["t1", "t2"]
 
-constraint :: Formula
-constraint = Not (Or (And (Var "p1") (Var "t1")) (And (Var "p2") (Var "t2")))
-
-reglement :: Formula
-reglement = Or (And door1 (Not door2)) (And door2 (Not door1))
-
-challenge1 :: Formula
-challenge1 = Or door1 door2
+w2 :: World
+w2 = ["p1", "p2", "t1", "t2"]
