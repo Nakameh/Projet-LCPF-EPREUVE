@@ -1,6 +1,9 @@
 module CPL (
     Formula (..),
     World,
+    genAllWorlds,
+    extrait,
+    retireDoublons,
     findWorlds
 ) where 
 
