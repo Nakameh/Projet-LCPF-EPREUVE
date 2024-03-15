@@ -2,9 +2,12 @@ module CPL (
     Formula (..),
     World,
     genAllWorlds,
-    extrait,
-    retireDoublons,
-    findWorlds
+    testGenAllWorlds,
+    sat,
+    testSat,
+    findWorlds,
+    testFindWorlds,
+    testAll
 ) where
 
 
