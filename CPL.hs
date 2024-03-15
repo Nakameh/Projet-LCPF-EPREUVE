@@ -5,7 +5,7 @@ module CPL (
     extrait,
     retireDoublons,
     findWorlds
-) where 
+) where
 
 
 
@@ -62,9 +62,9 @@ sat w (Imp f1 f2) = not (sat w f1) || sat w f2
 sat w (Eqv f1 f2) = sat w f1 == sat w f2
 sat w (Not f) = not (sat w f)
 sat w (Var x) = contient w x
-    where 
+    where
         contient [] _ = False
-        contient (y:ys) x 
+        contient (y:ys) x
             | x == y = True
             | otherwise = contient ys x
 
@@ -78,7 +78,7 @@ findWorlds f = listGoodWorlds f (genAllWorlds (retireDoublons (extrait f)))
 
 listGoodWorlds :: Formula -> [World] -> [World]
 listGoodWorlds f [] = []
-listGoodWorlds f (w:ws) 
+listGoodWorlds f (w:ws)
     | sat w f  = w : listGoodWorlds f ws
     | otherwise = listGoodWorlds f ws
 
@@ -103,9 +103,93 @@ retireDoublons [] = []
 retireDoublons (x:xs)
     |contenu x xs = retireDoublons xs
     |otherwise = x : retireDoublons xs
-    where 
+    where
         contenu :: String -> [String] -> Bool
         contenu _ [] = False
         contenu x (y:ys)
             | x == y = True
             | otherwise = contenu x ys
+
+
+
+testGenAllWorlds :: [Bool]
+testGenAllWorlds = [
+    genAllWorlds [] == [[]],
+    genAllWorlds ["p1"] == [["p1"], []],
+    genAllWorlds w0== [["p1", "p2"], ["p1"], ["p2"], []],
+    genAllWorlds w2 == [
+        ["p1", "p2", "t1", "t2"],
+        ["p1", "p2", "t1"],
+        ["p1", "p2", "t2"],
+        ["p1", "p2"],
+        ["p1", "t1", "t2"],
+        ["p1", "t1"],
+        ["p1", "t2"],
+        ["p1"],
+        ["p2", "t1", "t2"],
+        ["p2", "t1"],
+        ["p2", "t2"],
+        ["p2"],
+        ["t1", "t2"],
+        ["t1"],
+        ["t2"],
+        []
+        ]
+    ]
+
+testSat :: [Bool]
+testSat = [
+    sat w0 (Var "p2"),
+    not (sat w0 (Var "t1")),
+    not (sat w0 (Var "t2")),
+    sat w0 (And (Var "p1") (Var "p2")),
+    sat w1 (Or (Var "t1") (Var "t2")),
+    sat w2 (And (Var "p1") (Var "t2")),
+    not (sat w2 (And (Var "p1") (Not (Var "t1")))),
+    not (sat w1 (Not (Var "t1")))
+    ]
+
+testExtrait :: [Bool]
+testExtrait = [
+    null (extrait T),
+    null (extrait F),
+    extrait (And (Var "p1") (Var "p2")) == ["p1", "p2"],
+    extrait (Or (Var "p1") (Var "p2")) == ["p1", "p2"],
+    extrait (Imp (Var "p1") (Var "p2")) == ["p1", "p2"],
+    extrait (Eqv (Var "p1") (Var "p2")) == ["p1", "p2"],
+    extrait (Not (Var "p1")) == ["p1"],
+    extrait (Var "p1") == ["p1"]
+    ]
+
+testRetireDoublons :: [Bool]
+testRetireDoublons = [
+    null (retireDoublons []),
+    retireDoublons ["p1"] == ["p1"],
+    retireDoublons ["p1", "p2", "p1", "p2"] == ["p1", "p2"],
+    retireDoublons ["p1", "p2", "p1", "p2", "p3", "p3"] == ["p1", "p2", "p3"]
+    ]
+
+testListGoodWorlds :: [Bool]
+testListGoodWorlds = [
+    listGoodWorlds (Var "p1") (genAllWorlds w0) == [["p1", "p2"], ["p1"]],
+    listGoodWorlds (Var "t1") (genAllWorlds w1) == [["t1", "t2"], ["t1"]],
+    listGoodWorlds (And (Var "p1") (Var "t2")) (genAllWorlds w2) == [["p1","p2","t1","t2"],["p1","p2","t2"],["p1","t1","t2"],["p1","t2"]],
+    listGoodWorlds (And (Var "p1") (Not (Var "t1"))) (genAllWorlds w2) /= [["p1", "p2", "t1", "t2"], ["p1", "p2"]],
+    listGoodWorlds (Not (Var "t1")) (genAllWorlds w1) /= [["t1", "t2"], ["t2"]]
+    ]
+
+testFindWorlds :: [Bool]
+testFindWorlds = [
+    findWorlds exemple == [["p1","p2","t1","t2"],["p1","p2","t1"],["p1","p2","t2"],["p1","t1","t2"],["p1","t1"],["p1","t2"],["p2","t1","t2"],["p2","t1"],["p2","t2"]],
+    findWorlds (Var "p1") == [["p1"]],
+    findWorlds (And (Var "p1") (Not (Var "t1"))) /= [["p1", "p2", "t1", "t2"], ["p1", "p2"]],
+    findWorlds (Not (Var "t1")) /= [["t1", "t2"], ["t2"]]
+    ]
+
+test :: [Bool] -> Bool
+test xs = foldr (&&) True xs
+
+testAll :: [Char]
+testAll
+    |test testGenAllWorlds && test testSat && test testExtrait && test testRetireDoublons && test testListGoodWorlds && test testFindWorlds = "Success!"
+    |otherwise = "Failure!"
