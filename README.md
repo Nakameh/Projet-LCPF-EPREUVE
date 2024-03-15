@@ -21,3 +21,4 @@ Pour exécuter le projet, vous pouvez utiliser GHC, le compilateur Haskell. Par 
 ```sh
 ghc -o cha1 cha1.hs
 ./cha1
+```
