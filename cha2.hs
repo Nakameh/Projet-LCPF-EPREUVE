@@ -15,3 +15,9 @@ reglement = Or (And door1  door2) (And (Not door2) (Not door1))
 
 challenge2 :: Formula
 challenge2 = And constraint reglement
+
+
+
+main :: IO ()
+main = do
+    print (findWorlds challenge2)
