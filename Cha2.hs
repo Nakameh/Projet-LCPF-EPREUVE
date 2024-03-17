@@ -6,7 +6,7 @@ module Cha2(
 
 
 
--- Importation de l'objet Formula et de la fonction findWorlds
+-- Importation de l'objet Formula et des fonctions du module CPL
 import CPL
 
 
